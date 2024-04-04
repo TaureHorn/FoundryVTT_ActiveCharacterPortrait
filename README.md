@@ -1,0 +1,1 @@
+#Active Character Portrait

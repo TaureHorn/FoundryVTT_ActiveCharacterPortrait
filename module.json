@@ -1,0 +1,18 @@
+{
+  "id": "active-character-portrait",
+  "title": "Active Character Portrait",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "11"
+  },
+  "description": "Adds a togglable floating window showing the portrait of the currently selected character.",
+  "authors": [
+    {
+      "name": "TaureHorn",
+      "url": "https://github.com/TaureHorn",
+      "flags": {}
+    }
+  ],
+  "url": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait"
+}

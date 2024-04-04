@@ -1,0 +1,3 @@
+Hooks.on('renderPlayerList', function() {
+
+})
