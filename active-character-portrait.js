@@ -11,8 +11,6 @@ class ACP {
         width: 215
     }
 
-    static openID = ""
-
     static log(force, ...args) {
         const shouldLog = force || game.modules.get('_dev-mode')?.api?.getPackage
 
@@ -59,9 +57,7 @@ class Portrait extends Application {
         return data
     }
 
-    _getHeaderButtons(){
-        return ""
-    }
+    _getHeaderButtons() { return {} }
 
     activateListeners(html) {
         super.activateListeners(html)
@@ -81,10 +77,7 @@ class Portrait extends Application {
     }
 
     render(...args) {
-        if (this._represents) {
-            this._represents.apps[this.appId] = this
-        }
-        ACP.openID = this.appId
+        this._represents.apps[this.appId] = this
         return super.render(...args)
     }
 }
@@ -94,11 +87,11 @@ Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
 })
 
 Hooks.on('renderPlayerList', (playerList, html) => {
+    new Portrait(game.user).render(true)
     const tooltip = game.i18n.localize('ACP.button-title')
     html.prepend(
         `<button type="button" class="acp-button" title='${tooltip}'><i class="fas fa-image-portrait"></i></button>`
     )
-
     html.on('click', '.acp-button', (event) => {
         new Portrait(game.user).render(true)
     })

@@ -6,7 +6,7 @@
     "minimum": "11",
     "verified": "11"
   },
-  "description": "Adds a togglable floating window showing the portrait of the currently selected character.",
+  "description": "Adds a togglable floating window showing the name and portrait of the currently selected character.",
   "scripts": [
       "active-character-portrait.js"
   ],
@@ -27,5 +27,6 @@
       "flags": {}
     }
   ],
-  "url": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait"
+  "url": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait",
+  "download": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/archive/refs/v1.0.zip"
 }
