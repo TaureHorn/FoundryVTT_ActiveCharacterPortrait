@@ -7,6 +7,19 @@
     "verified": "11"
   },
   "description": "Adds a togglable floating window showing the portrait of the currently selected character.",
+  "scripts": [
+      "active-character-portrait.js"
+  ],
+  "styles": [
+      "active-character-portrait.css"
+  ],
+  "languages": [
+      {
+          "lang": "en",
+          "name": "English",
+          "path": "lang/en.json"
+      }
+  ],
   "authors": [
     {
       "name": "TaureHorn",

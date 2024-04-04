@@ -1,0 +1,23 @@
+.acp-button {
+    background: none;
+    border: none;
+    box-sizing: content-box;
+    display: block;
+    color: #aaa;
+    margin: 0;
+    outline: none;
+    padding: 0;
+}
+
+.acp-image {
+    border: none;
+    cursor: pointer;
+    margin: 0;
+    outline: none;
+    padding: 0;
+}
+
+.acp-image:hover {
+    filter: brightness(1.25);
+}
+
