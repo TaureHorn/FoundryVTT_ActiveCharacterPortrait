@@ -4,7 +4,10 @@ class ACP {
 
     static ID = 'active-character-portrait'
 
-    static TEMPLATE = `modules/${this.ID}/portrait.hbs`
+    static TEMPLATE = {
+        CHARSELECT: `modules/${this.ID}/char-select.hbs`,
+        PORTRAIT: `modules/${this.ID}/portrait.hbs`
+    }
 
     static SIZE = {
         height: 250,
@@ -30,15 +33,13 @@ class Portrait extends Application {
     static get defaultOptions() {
         const defaults = super.defaultOptions;
         const overrides = {
-            left: 2030,
-            height: ACP.SIZE.height,
-            id: ACP.ID,
+            left: 2040,
+            id: `${ACP.ID}_portrait`,
             popOut: true,
             minimizable: false,
             resizable: false,
-            template: ACP.TEMPLATE,
-            top: 1126,
-            width: ACP.SIZE.width,
+            template: ACP.TEMPLATE.PORTRAIT,
+            top: 1140,
         }
         return foundry.utils.mergeObject(defaults, overrides)
     }
@@ -72,7 +73,7 @@ class Portrait extends Application {
     _handleButtonClick(event) {
         const action = $(event.currentTarget).data().action
         if (action === "openConfig") {
-            new UserConfig(game.user).render(true)
+            new CharacterSelector().render(true)
         }
     }
 
@@ -82,9 +83,60 @@ class Portrait extends Application {
     }
 }
 
-Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
-    registerPackageDebugFlag(ACP.ID)
-})
+class CharacterSelector extends FormApplication {
+
+    static get defaultOptions() {
+        const defaults = super.defaultOptions;
+        const overriders = {
+            id: `${ACP.ID}_character-selector`,
+            popOut: true,
+            minimizable: false,
+            resizable: true,
+            template: ACP.TEMPLATE.CHARSELECT,
+            title: 'Character Selector',
+            width: 1400,
+        }
+        return foundry.utils.mergeObject(defaults, overriders)
+    }
+
+    getData() {
+        let characters = game.actors._source
+        if (!game.user.isGM) {
+            let chars = game.actors._source.filter((obj) => obj.ownership.default === 3)
+            characters = chars.concat(game.actors._source.filter((obj) => obj.ownership.hasOwnProperty(game.userId)))
+        }
+        return {
+            chars: characters,
+            user: game.user
+        }
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html)
+        html.on('click', "[data-action]", this._handleButtonClick)
+    }
+
+    _handleButtonClick = (event) => {
+        const selected = $(event.currentTarget).data()
+        const action = selected.action
+        const id = selected.charId
+        switch (action) {
+            case 'select-char':
+                const character = game.actors.get(id)
+                game.user.update({ "character": character })
+                this.close()
+                break;
+            case 'unselect-char':
+                game.user.update({ "character": null })
+                this.close()
+                break;
+            default:
+                ui.notifications.error('ACP | Encountered an invalid "data-action" in _handleButtonClick')
+        }
+
+    }
+
+}
 
 Hooks.on('renderPlayerList', (playerList, html) => {
     new Portrait(game.user).render(true)

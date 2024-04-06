@@ -3,21 +3,45 @@
     border: none;
     box-sizing: content-box;
     display: block;
-    color: #aaa;
+    color: var(--color-text-light-5);
     margin: 0;
     outline: none;
     padding: 0;
 }
 
+.acp-char {
+    border: 1px solid var(--color-border-dark-5);
+    text-align: left;
+    text-wrap: pretty;
+}
+
+.acp-char:hover {
+    filter: brightness(1.25);
+}
+
+.acp-char-table {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
 .acp-image {
     border: none;
     cursor: pointer;
-    margin: 0;
+    margin: 0!important;
     outline: none;
     padding: 0;
 }
 
 .acp-image:hover {
     filter: brightness(1.25);
+}
+
+#active-character-portrait_character-selector .window-content {
+    padding: 20px
+}
+
+#active-character-portrait_portrait .window-content {
+    padding: 0px !important;
 }
 
