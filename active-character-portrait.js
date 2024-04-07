@@ -33,13 +33,13 @@ class Portrait extends Application {
     static get defaultOptions() {
         const defaults = super.defaultOptions;
         const overrides = {
-            left: 2040,
             id: `${ACP.ID}_portrait`,
+            left: screen.width - 512,
             popOut: true,
             minimizable: false,
             resizable: false,
             template: ACP.TEMPLATE.PORTRAIT,
-            top: 1140,
+            top: screen.height * 0.79
         }
         return foundry.utils.mergeObject(defaults, overrides)
     }
@@ -58,12 +58,20 @@ class Portrait extends Application {
         return data
     }
 
-    _getHeaderButtons() { return {} }
+    _getHeaderButtons() {
+        return [{
+            label: "",
+            class: "close",
+            icon: "fas fa-times",
+            onclick: () => this.close()
+        }]
+    }
 
     activateListeners(html) {
         super.activateListeners(html)
         html.on('click', "[data-action]", this._handleButtonClick)
     }
+
 
     async close(...args) {
         delete this._represents.apps[this.appId]
@@ -81,6 +89,7 @@ class Portrait extends Application {
         this._represents.apps[this.appId] = this
         return super.render(...args)
     }
+
 }
 
 class CharacterSelector extends FormApplication {
@@ -88,13 +97,14 @@ class CharacterSelector extends FormApplication {
     static get defaultOptions() {
         const defaults = super.defaultOptions;
         const overriders = {
+            height: canvas.app?.screen.height * 0.8,
             id: `${ACP.ID}_character-selector`,
             popOut: true,
             minimizable: false,
             resizable: true,
             template: ACP.TEMPLATE.CHARSELECT,
             title: 'Character Selector',
-            width: 1400,
+            width: canvas.app?.screen.width * 0.54,
         }
         return foundry.utils.mergeObject(defaults, overriders)
     }
@@ -137,7 +147,6 @@ class CharacterSelector extends FormApplication {
     }
 
 }
-
 Hooks.on('renderPlayerList', (playerList, html) => {
     new Portrait(game.user).render(true)
     const tooltip = game.i18n.localize('ACP.button-title')
