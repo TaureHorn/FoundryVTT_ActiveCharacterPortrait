@@ -1,32 +1,33 @@
 {
-  "id": "active-character-portrait",
-  "title": "Active Character Portrait",
-  "version": "1.0.0",
-  "compatibility": {
-    "minimum": "11",
-    "verified": "11"
-  },
-  "description": "Adds a togglable floating window showing the name and portrait of the currently selected character.",
-  "scripts": [
-      "active-character-portrait.js"
-  ],
-  "styles": [
-      "active-character-portrait.css"
-  ],
-  "languages": [
-      {
-          "lang": "en",
-          "name": "English",
-          "path": "lang/en.json"
-      }
-  ],
-  "authors": [
-    {
-      "name": "TaureHorn",
-      "url": "https://github.com/TaureHorn",
-      "flags": {}
-    }
-  ],
-  "url": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait",
-  "download": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/archive/refs/tags/v1.1.zip"
+    "id": "active-character-portrait",
+    "title": "Active Character Portrait",
+    "version": "1.1.5",
+    "compatibility": {
+        "minimum": "11",
+        "verified": "11"
+    },
+    "description": "Adds a togglable floating window showing the name and portrait of the currently selected character and adds a character selection window.",
+    "scripts": [
+        "active-character-portrait.js"
+    ],
+    "styles": [
+        "active-character-portrait.css"
+    ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
+    ],
+    "authors": [
+        {
+            "name": "TaureHorn",
+            "url": "https://github.com/TaureHorn",
+            "flags": {}
+        }
+    ],
+    "url": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait",
+    "download": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/archive/refs/tags/v1.1.5.zip",
+    "manifest": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.1.5/module.json"
 }
