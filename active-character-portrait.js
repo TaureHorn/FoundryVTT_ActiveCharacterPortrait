@@ -34,12 +34,12 @@ class Portrait extends Application {
         const defaults = super.defaultOptions;
         const overrides = {
             id: `${ACP.ID}_portrait`,
-            left: screen.width - 512,
+            left: canvas.app.screen.width - 512,
             popOut: true,
             minimizable: false,
             resizable: false,
             template: ACP.TEMPLATE.PORTRAIT,
-            top: screen.height * 0.79
+            top: canvas.app.screen.height - 240
         }
         return foundry.utils.mergeObject(defaults, overrides)
     }
