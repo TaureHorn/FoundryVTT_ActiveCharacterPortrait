@@ -3,9 +3,9 @@
     </br></br>
     <div class="acp-char-table">
     {{#each chars}}
-        <button class="acp-button acp-char" data-action="select-char" data-char-id="{{_id}}">
-            <div style="align-items:center;display:flex;gap:20px">
-                <img class="acp-image" src="{{img}}" width="64" />
+        <button class="acp-button acp-char" data-action="select-char" data-char-id="{{_id}}" title="{{name}}">
+            <div style="align-items:center;display:flex;gap:10px">
+                <img class="acp-image" src="{{img}}" width="64"/>
                 <span>{{name}}</span>
             </div>
         </button>
