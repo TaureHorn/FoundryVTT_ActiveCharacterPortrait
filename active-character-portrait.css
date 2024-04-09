@@ -1,3 +1,4 @@
+
 .acp-button {
     background: none;
     border: none;
@@ -11,12 +12,14 @@
 
 .acp-char {
     border: 1px solid var(--color-border-dark-5);
+    overflow: hidden;
     text-align: left;
-    text-wrap: pretty;
+    white-space: nowrap;
 }
 
 .acp-char:hover {
     filter: brightness(1.25);
+    font-weight: bold;
 }
 
 .acp-char-table {

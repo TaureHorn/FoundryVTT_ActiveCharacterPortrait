@@ -1,17 +1,16 @@
-console.log("ACP | Hello World")
 
 class ACP {
 
     static ID = 'active-character-portrait'
 
+    static FLAGS = {
+        PORTRAIT: 'portraitWindow',
+        SELECTOR: 'characterSelectWindow'
+    }
+
     static TEMPLATE = {
         CHARSELECT: `modules/${this.ID}/char-select.hbs`,
         PORTRAIT: `modules/${this.ID}/portrait.hbs`
-    }
-
-    static SIZE = {
-        height: 250,
-        width: 215
     }
 
     static log(force, ...args) {
@@ -33,13 +32,15 @@ class Portrait extends Application {
     static get defaultOptions() {
         const defaults = super.defaultOptions;
         const overrides = {
+            height: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).height,
             id: `${ACP.ID}_portrait`,
-            left: canvas.app.screen.width - 512,
-            popOut: true,
+            left: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).left,
             minimizable: false,
-            resizable: false,
+            popOut: true,
+            resizable: true,
             template: ACP.TEMPLATE.PORTRAIT,
-            top: canvas.app.screen.height - 240
+            top: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).top,
+            width: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).width,
         }
         return foundry.utils.mergeObject(defaults, overrides)
     }
@@ -59,12 +60,23 @@ class Portrait extends Application {
     }
 
     _getHeaderButtons() {
-        return [{
-            label: "",
-            class: "close",
-            icon: "fas fa-times",
-            onclick: () => this.close()
-        }]
+        return [
+            {
+                label: "",
+                class: "pin",
+                icon: "fas fa-thumbtack",
+                onclick: () => {
+                    game.user.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, this.position)
+                    ui.notifications.notify("active character portrait | Pinned portrait to current size and position")
+                }
+            },
+            {
+                label: "",
+                class: "close",
+                icon: "fas fa-times",
+                onclick: () => this.close()
+            }
+        ]
     }
 
     activateListeners(html) {
@@ -97,14 +109,16 @@ class CharacterSelector extends FormApplication {
     static get defaultOptions() {
         const defaults = super.defaultOptions;
         const overriders = {
-            height: canvas.app?.screen.height * 0.8,
+            height: game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR).height,
             id: `${ACP.ID}_character-selector`,
-            popOut: true,
+            left: game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR).left,
             minimizable: false,
+            popOut: true,
             resizable: true,
             template: ACP.TEMPLATE.CHARSELECT,
             title: 'Character Selector',
-            width: canvas.app?.screen.width * 0.54,
+            top: game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR).top,
+            width: game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR).width,
         }
         return foundry.utils.mergeObject(defaults, overriders)
     }
@@ -119,6 +133,26 @@ class CharacterSelector extends FormApplication {
             chars: characters,
             user: game.user
         }
+    }
+
+    _getHeaderButtons() {
+        return [
+            {
+                label: "",
+                class: "pin",
+                icon: "fas fa-thumbtack",
+                onclick: () => {
+                    game.user.setFlag(ACP.ID, ACP.FLAGS.SELECTOR, this.position)
+                    ui.notifications.notify("active character portrait | Pinned character selector to current size and position")
+                }
+            },
+            {
+                label: "",
+                class: "close",
+                icon: "fas fa-times",
+                onclick: () => this.close()
+            }
+        ]
     }
 
     activateListeners(html) {
@@ -147,15 +181,36 @@ class CharacterSelector extends FormApplication {
     }
 
 }
-Hooks.on('renderPlayerList', (playerList, html) => {
+
+// pre set users flags for the positioning of windows and auto launch portrait app
+Hooks.once('ready', function() {
+    if (!game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT)) {
+        game.user.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, {
+            height: 200,
+            left: canvas.app.screen.width - 512,
+            top: canvas.app.screen.height - 240,
+            width: 200
+        })
+    }
+    if (!game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR)) {
+        game.user.setFlag(ACP.ID, ACP.FLAGS.SELECTOR, {
+            height: canvas.app.screen.height * 0.5,
+            left: canvas.app.screen.width * 0.2,
+            top: canvas.app.screen.height * 0.1,
+            width: canvas.app.screen.width * 0.6
+        })
+    }
     new Portrait(game.user).render(true)
+})
+
+// add button to player list to open up portrait
+Hooks.on('renderPlayerList', (playerList, html) => {
     const tooltip = game.i18n.localize('ACP.button-title')
     html.prepend(
-        `<button type="button" class="acp-button" title='${tooltip}'><i class="fas fa-image-portrait"></i></button>`
+        `<button type="button" class="acp-button" data-tooltip='${tooltip}'><i class="fas fa-image-portrait"></i></button>`
     )
     html.on('click', '.acp-button', (event) => {
         new Portrait(game.user).render(true)
     })
 })
 
-console.log("ACP | loaded module")
