@@ -1,7 +1,7 @@
 {
     "id": "active-character-portrait",
     "title": "Active Character Portrait",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "compatibility": {
         "minimum": "11",
         "verified": "11"
@@ -28,6 +28,6 @@
         }
     ],
     "url": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait",
-    "download": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.2.0/active-character-portrait_v1.2.0.zip",
-    "manifest": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.2.0/module.json"
+    "download": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.2.1/active-character-portrait_v1.2.1.zip",
+    "manifest": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.2.1/module.json"
 }

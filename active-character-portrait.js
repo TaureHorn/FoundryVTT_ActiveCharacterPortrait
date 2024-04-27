@@ -1,4 +1,5 @@
 
+
 class ACP {
 
     static ID = 'active-character-portrait'
@@ -74,7 +75,7 @@ class Portrait extends Application {
                 label: "",
                 class: "close",
                 icon: "fas fa-times",
-                onclick: () => this.close()
+                onclick: () => this.close("forceClose")
             }
         ]
     }
@@ -86,8 +87,10 @@ class Portrait extends Application {
 
 
     async close(...args) {
-        delete this._represents.apps[this.appId]
-        return super.close(...args)
+        if (!game.settings.get(ACP.ID, 'bypassEscKey') || Object.values(arguments).includes("forceClose")) {
+            delete this._represents.apps[this.appId]
+            return super.close(...args)
+        }
     }
 
     _handleButtonClick(event) {
@@ -181,6 +184,25 @@ class CharacterSelector extends FormApplication {
     }
 
 }
+
+Hooks.on('init', function() {
+    game.settings.register(ACP.ID, 'bypassEscKey', {
+        name: "Bypass 'Esc' key",
+        hint: "If this setting is enabled, the portrait window will no longer close when you press the 'Esc' key to close all open windows. It can still be closed manually by clicking the 'x' button on the window header.",
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: value => {
+            ACP.log(true, `Bypass 'Esc' key setting set to: ${value}`)
+        },
+        choices: {
+            true: 'True',
+            false: 'False',
+        }
+    })
+
+})
 
 // pre set users flags for the positioning of windows and auto launch portrait app
 Hooks.once('ready', function() {
