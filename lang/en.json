@@ -1,6 +1,6 @@
 {
     "ACP": {
         "button-title": "Open active character portrait window",
-        "open-config": "Open character selector"
+        "open-config": "left click: character sheet right click: character selector"
     }
 }

@@ -33,6 +33,7 @@ class Portrait extends Application {
     static get defaultOptions() {
         const defaults = super.defaultOptions;
         const overrides = {
+            classes: ["acp-portait"],
             height: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).height,
             id: `${ACP.ID}_portrait`,
             left: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).left,
@@ -82,7 +83,8 @@ class Portrait extends Application {
 
     activateListeners(html) {
         super.activateListeners(html)
-        html.on('click', "[data-action]", this._handleButtonClick)
+        html.on('click', this, this._handleLeftClick)
+        html.on('contextmenu', "[data-action]", this._handleRightClick)
     }
 
 
@@ -93,7 +95,11 @@ class Portrait extends Application {
         }
     }
 
-    _handleButtonClick(event) {
+    _handleLeftClick = async () => {
+        return this._represents.character.sheet.render(true)
+    }
+
+    _handleRightClick(event) {
         const action = $(event.currentTarget).data().action
         if (action === "openConfig") {
             new CharacterSelector().render(true)
