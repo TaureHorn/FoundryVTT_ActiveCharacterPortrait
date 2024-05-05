@@ -1,5 +1,4 @@
 
-
 class ACP {
 
     static ID = 'active-character-portrait'
@@ -96,7 +95,11 @@ class Portrait extends Application {
     }
 
     _handleLeftClick = async () => {
-        return this._represents.character.sheet.render(true)
+        if (this._represents.character) {
+            return this._represents.character.sheet.render(true)
+        } else {
+            ui.notifications.warn('active character portrait | you must select a character to represent you')
+        }
     }
 
     _handleRightClick(event) {
@@ -235,9 +238,9 @@ Hooks.once('ready', function() {
 Hooks.on('renderPlayerList', (playerList, html) => {
     const tooltip = game.i18n.localize('ACP.button-title')
     html.prepend(
-        `<button type="button" class="acp-button" data-tooltip='${tooltip}'><i class="fas fa-image-portrait"></i></button>`
+        `<button type="button" id="acp-open-portrait" data-tooltip='${tooltip}'><i class="fas fa-image-portrait"></i>Open Portrait</button>`
     )
-    html.on('click', '.acp-button', (event) => {
+    html.on('click', '#acp-open-portrait', () => {
         new Portrait(game.user).render(true)
     })
 })
