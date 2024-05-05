@@ -4,7 +4,6 @@
     border: none;
     box-sizing: content-box;
     display: block;
-    color: var(--color-text-light-5);
     margin: 0;
     outline: none;
     padding: 0;
@@ -38,6 +37,10 @@
 
 .acp-image:hover {
     filter: brightness(1.25);
+}
+
+#active-character-portrait_portrait .window-content {
+    background:none !important;
 }
 
 #active-character-portrait_character-selector .window-content {
