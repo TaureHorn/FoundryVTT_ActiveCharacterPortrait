@@ -255,7 +255,7 @@ Hooks.on('init', function() {
         scope: 'client',
         config: true,
         type: Boolean,
-        default: false,
+        default: true,
         onChange: value => {
             ACP.log(true, `Bypass 'Esc' key setting set to: ${value}`)
         },
