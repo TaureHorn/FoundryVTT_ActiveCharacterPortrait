@@ -29,5 +29,6 @@
     ],
     "url": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait",
     "download": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.2.3/active-character-portrait_v1.2.3.zip",
-    "manifest": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.2.3/module.json"
+    "manifest": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.2.3/module.json",
+    "socket": true
 }
