@@ -61,7 +61,7 @@ class Portrait extends Application {
     }
 
     _getHeaderButtons() {
-        return [
+        const buttons = [
             {
                 label: "",
                 class: "pin",
@@ -78,6 +78,21 @@ class Portrait extends Application {
                 onclick: () => this.close("forceClose")
             }
         ]
+        if (game.user.isGM) {
+            buttons.unshift({
+                label: "",
+                class: "show-image",
+                icon: "fas fa-magnifying-glass",
+                onclick: () => {
+                    const ip = new PersistentPopout(this._represents.character.img, {
+                        title: this._represents.character.name,
+                        uuid: this._represents.character.uuid
+                    })
+                    ip.render(true)
+                }
+            })
+        }
+        return buttons
     }
 
     activateListeners(html) {
@@ -114,6 +129,45 @@ class Portrait extends Application {
         return super.render(...args)
     }
 
+}
+
+class PersistentPopout extends ImagePopout {
+
+    _getHeaderButtons() {
+        const buttons = [
+            {
+                label: "close",
+                class: "close",
+                icon: "fas fa-times",
+                onclick: () => { this.close("forceClose") }
+            }
+        ]
+        if (game.user.isGM) {
+            buttons.unshift({
+                label: "Show Players",
+                class: "share-image",
+                icon: "fas fa-eye",
+                onclick: () => this.shareImage()
+            })
+        }
+        return buttons
+    }
+
+    async close(...args) {
+        if (!game.settings.get(ACP.ID, 'bypassEscKey') || Object.values(arguments).includes("forceClose")) {
+            return super.close(...args)
+        }
+    }
+
+    static _handleShareApp(data){
+        new PersistentPopout(data.object, {
+            uuid: data.options.uuid
+        }).render(true)
+    }
+
+    shareImage() {
+        game.socket.emit('module.active-character-portrait', this)
+    }
 }
 
 class CharacterSelector extends FormApplication {
@@ -232,6 +286,10 @@ Hooks.once('ready', function() {
         })
     }
     new Portrait(game.user).render(true)
+
+    game.socket.on("module.active-character-portrait", (data) => {
+        PersistentPopout._handleShareApp(data)
+    })
 })
 
 // add button to player list to open up portrait
