@@ -296,10 +296,17 @@ Hooks.once('ready', function() {
 Hooks.on('renderPlayerList', (playerList, html) => {
     const tooltip = game.i18n.localize('ACP.button-title')
     html.prepend(
-        `<button type="button" id="acp-open-portrait" data-tooltip='${tooltip}'><i class="fas fa-image-portrait"></i>Open Portrait</button>`
+        `<button type="button" id="acp-open-portrait" data-tooltip='${tooltip}'><i class="fas fa-image-portrait"></i>close portrait</button>`
     )
     html.on('click', '#acp-open-portrait', () => {
-        new Portrait(game.user).render(true)
+        const window = document.getElementById(`${ACP.ID}_portrait`)
+        if (window) {
+            ui.windows[window.dataset.appid].close("forceClose")
+            document.getElementById('acp-open-portrait').innerHTML = '<i class="fas fa-image-portrait"></i>open portrait'
+        } else {
+            new Portrait(game.user).render(true)
+            document.getElementById('acp-open-portrait').innerHTML = '<i class="fas fa-image-portrait"></i>close portrait'
+        }
     })
 })
 
