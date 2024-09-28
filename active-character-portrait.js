@@ -159,7 +159,7 @@ class PersistentPopout extends ImagePopout {
         }
     }
 
-    static _handleShareApp(data){
+    static _handleShareApp(data) {
         new PersistentPopout(data.object, {
             uuid: data.options.uuid
         }).render(true)
@@ -256,15 +256,17 @@ Hooks.on('init', function() {
         config: true,
         type: Boolean,
         default: true,
-        onChange: value => {
-            ACP.log(true, `Bypass 'Esc' key setting set to: ${value}`)
-        },
-        choices: {
-            true: 'True',
-            false: 'False',
-        }
+        requiresReload: false
     })
-
+    game.settings.register(ACP.ID, 'headerButton', {
+        name: "ACP Switcher header button",
+        hint: 'If enabled, adds a button to the top of actor sheets to quickly switch your represented character to that actor. DOES NOT WORK FOR ACTORS FROM COMPENDIUMS!',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        requiresReload: false
+    })
 })
 
 // pre set users flags for the positioning of windows and auto launch portrait app
@@ -308,5 +310,25 @@ Hooks.on('renderPlayerList', (playerList, html) => {
             document.getElementById('acp-open-portrait').innerHTML = '<i class="fas fa-image-portrait"></i>close portrait'
         }
     })
+})
+
+// add button to actor sheet header to switch to actor representing player
+// method stolen from _dev-mode module
+Hooks.on('getActorSheetHeaderButtons', async (app, buttons) => {
+    if (app.object && game.settings.get(ACP.ID, 'headerButton')) {
+        buttons.unshift({
+            class: 'acp-switcher',
+            icon: 'fa fa-swap-arrows',
+            label: 'ACP Switcher',
+            onclick: () => {
+                if (!app.object.pack) {
+                    const character = game.actors.get(app.object._id)
+                    character ? game.user.update({ "character": character }) : ui.notifications.error(`ACP | unable to find actor with id of ${app.object._id}.`)
+                } else {
+                    ui.notifications.warn('ACP | Cannot set a Compendium item as your active character!')
+                }
+            }
+        })
+    }
 })
 
