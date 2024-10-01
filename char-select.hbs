@@ -1,6 +1,11 @@
 <div id="char-select">
     <button data-action="unselect-char">Unselect Character</button>
     </br></br>
+    <form>
+        <input type="text" name="charSearch" id="acp-char-search" minlength="1" maxlength="64" placeholder="search..." />
+        <button for="charSearch" type="submit" style="display:none"></button>
+    </form>
+    </br>
     <div class="acp-char-table">
     {{#each chars}}
         <button class="acp-button acp-char" data-action="select-char" data-char-id="{{_id}}" title="{{name}}">

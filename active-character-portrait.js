@@ -175,11 +175,13 @@ class CharacterSelector extends FormApplication {
     static get defaultOptions() {
         const defaults = super.defaultOptions;
         const overriders = {
+            closeOnSubmit: false,
             height: game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR).height,
             id: `${ACP.ID}_character-selector`,
             left: game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR).left,
             minimizable: false,
             popOut: true,
+            query: "",
             resizable: true,
             template: ACP.TEMPLATE.CHARSELECT,
             title: 'Character Selector',
@@ -190,11 +192,17 @@ class CharacterSelector extends FormApplication {
     }
 
     getData() {
-        let characters = game.actors._source
-        if (!game.user.isGM) {
-            let chars = game.actors._source.filter((obj) => obj.ownership.default === 3)
-            characters = chars.concat(game.actors._source.filter((obj) => obj.ownership.hasOwnProperty(game.userId)))
+
+        let characters = []
+        if (!this.options.query) {
+            characters = game.actors._source
+        } else {
+            characters = game.actors.search({ "query": this.options.query })
         }
+        if (!game.user.isGM) {
+            characters = characters.filter((obj) => obj.ownership.default === 3 || obj.ownership.hasOwnProperty(game.userId))
+        }
+
         return {
             chars: characters,
             user: game.user
@@ -243,9 +251,19 @@ class CharacterSelector extends FormApplication {
             default:
                 ui.notifications.error('ACP | Encountered an invalid "data-action" in _handleButtonClick')
         }
-
     }
 
+    render(...args) {
+        super.render(...args)
+        setTimeout(() => {
+            document.getElementById('acp-char-search').focus()
+        }, 200)
+    }
+
+    async _updateObject(event, formData) {
+        this.options.query = formData.charSearch
+        this.render(true)
+    }
 }
 
 Hooks.on('init', function() {
