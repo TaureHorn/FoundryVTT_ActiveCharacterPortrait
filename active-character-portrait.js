@@ -63,24 +63,26 @@ class Portrait extends Application {
     _getHeaderButtons() {
         const buttons = [
             {
-                label: "",
                 class: "pin",
                 icon: "fas fa-thumbtack",
+                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Pin' : '',
                 onclick: () => {
                     game.user.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, this.position)
                     ui.notifications.notify("active character portrait | Pinned portrait to current size and position")
-                }
+                },
+                tooltip: 'Remember this window size and location'
             },
             {
-                label: "",
                 class: "close",
                 icon: "fas fa-times",
-                onclick: () => this.close("forceClose")
+                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Close' : '',
+                onclick: () => this.close("forceClose"),
+                tooltip: 'Close window'
             }
         ]
         if (game.user.isGM) {
             buttons.unshift({
-                label: "",
+                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Zoom' : '',
                 class: "show-image",
                 icon: "fas fa-magnifying-glass",
                 onclick: () => {
@@ -89,7 +91,8 @@ class Portrait extends Application {
                         uuid: this._represents.character.uuid
                     })
                     ip.render(true)
-                }
+                },
+                tooltip: 'Show actors image in separate window'
             })
         }
         return buttons
@@ -136,18 +139,20 @@ class PersistentPopout extends ImagePopout {
     _getHeaderButtons() {
         const buttons = [
             {
-                label: "close",
                 class: "close",
                 icon: "fas fa-times",
-                onclick: () => { this.close("forceClose") }
+                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Close' : '',
+                onclick: () => { this.close("forceClose") },
+                tootlip: 'Close window'
             }
         ]
         if (game.user.isGM) {
             buttons.unshift({
-                label: "Show Players",
                 class: "share-image",
                 icon: "fas fa-eye",
-                onclick: () => this.shareImage()
+                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Show to players' : '',
+                onclick: () => this.shareImage(),
+                tootlip: 'Share image with players'
             })
         }
         return buttons
@@ -212,19 +217,21 @@ class CharacterSelector extends FormApplication {
     _getHeaderButtons() {
         return [
             {
-                label: "",
                 class: "pin",
                 icon: "fas fa-thumbtack",
+                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Pin' : '',
                 onclick: () => {
                     game.user.setFlag(ACP.ID, ACP.FLAGS.SELECTOR, this.position)
                     ui.notifications.notify("active character portrait | Pinned character selector to current size and position")
-                }
+                },
+                tooltip: 'Remember this window size and location'
             },
             {
-                label: "",
                 class: "close",
                 icon: "fas fa-times",
-                onclick: () => this.close()
+                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Close' : '',
+                onclick: () => this.close(),
+                tooltip: 'Close window'
             }
         ]
     }
@@ -267,6 +274,7 @@ class CharacterSelector extends FormApplication {
 }
 
 Hooks.on('init', function() {
+
     game.settings.register(ACP.ID, 'bypassEscKey', {
         name: "Bypass 'Esc' key",
         hint: "If this setting is enabled, the portrait window will no longer close when you press the 'Esc' key to close all open windows. It can still be closed manually by clicking the 'x' button on the window header.",
@@ -276,6 +284,7 @@ Hooks.on('init', function() {
         default: true,
         requiresReload: false
     })
+
     game.settings.register(ACP.ID, 'headerButton', {
         name: "ACP Switcher header button",
         hint: 'If enabled, adds a button to the top of actor sheets to quickly switch your represented character to that actor. DOES NOT WORK FOR ACTORS FROM COMPENDIUMS!',
@@ -285,6 +294,17 @@ Hooks.on('init', function() {
         default: true,
         requiresReload: false
     })
+
+    game.settings.register(ACP.ID, 'headerLabels', {
+        name: "Header button labels",
+        hint: 'Show labels for header buttons from this module? REQUIRES RELOAD',
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        requiresReload: true
+    })
+
 })
 
 // pre set users flags for the positioning of windows and auto launch portrait app
@@ -337,7 +357,7 @@ Hooks.on('getActorSheetHeaderButtons', async (app, buttons) => {
         buttons.unshift({
             class: 'acp-switcher',
             icon: 'fa fa-swap-arrows',
-            label: 'ACP Switcher',
+            label: game.settings.get(ACP.ID, 'headerLabels') ? 'ACP Switcher' : '',
             onclick: () => {
                 if (!app.object.pack) {
                     const character = game.actors.get(app.object._id)
@@ -345,7 +365,8 @@ Hooks.on('getActorSheetHeaderButtons', async (app, buttons) => {
                 } else {
                     ui.notifications.warn('ACP | Cannot set a Compendium item as your active character!')
                 }
-            }
+            },
+            tooltip: 'Active Character Portrait | Switch to character'
         })
     }
 })
