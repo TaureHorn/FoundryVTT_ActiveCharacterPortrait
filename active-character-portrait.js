@@ -128,8 +128,8 @@ class Portrait extends Application {
     }
 
     render(...args) {
+        super.render(...args)
         this._represents.apps[this.appId] = this
-        return super.render(...args)
     }
 
 }
@@ -325,7 +325,9 @@ Hooks.once('ready', function() {
             width: canvas.app.screen.width * 0.6
         })
     }
-    new Portrait(game.user).render(true)
+    setTimeout(() => {
+        new Portrait(game.user).render(true)
+    },1000)
 
     game.socket.on("module.active-character-portrait", (data) => {
         PersistentPopout._handleShareApp(data)
