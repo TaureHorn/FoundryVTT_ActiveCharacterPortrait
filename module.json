@@ -7,7 +7,7 @@
         "verified": "12"
     },
     "description": "Adds a togglable floating window showing the name and portrait of the currently selected character and adds a character selection window.",
-    "scripts": [
+    "esmodules": [
         "active-character-portrait.js"
     ],
     "styles": [
