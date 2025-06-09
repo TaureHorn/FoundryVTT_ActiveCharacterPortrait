@@ -1,20 +1,15 @@
-
-.acp-button {
-    background: none;
-    border: none;
-    box-sizing: content-box;
-    display: block;
-    margin: 0;
-    outline: none;
-    padding: 0;
-}
-
+/* ================== PORTRAIT */
 .acp-char {
     border: 1px solid var(--color-border-dark-5);
     overflow: hidden;
     text-align: left;
     white-space: nowrap;
 }
+
+.acp-portrait .window-content {
+    padding: 0px !important;
+}
+
 
 .acp-char:hover {
     filter: brightness(1.25);
@@ -35,22 +30,13 @@
     padding: 0;
 }
 
-.acp-image:hover {
-    filter: brightness(1.25);
-}
-
-#active-character-portrait_portrait .window-content {
-    background:none !important;
-}
-
 #active-character-portrait_character-selector .window-content {
     padding: 20px
 }
 
-#active-character-portrait_portrait .window-content {
-    padding: 0px !important;
-}
+
 
 #acp-char-search {
     color: var(--color-text-primary);
 }
+

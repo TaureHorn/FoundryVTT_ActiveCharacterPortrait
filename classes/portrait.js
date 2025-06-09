@@ -2,10 +2,7 @@ import ACP from "../active-character-portrait.js";
 import CharacterSelector from "./charSelector.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api
 
-
-// TODO: convert to ApplicationV2
-//
-export default class Portrait extends Application {
+class Portrait extends Application {
 
     constructor(user) {
         super()
@@ -113,6 +110,60 @@ export default class Portrait extends Application {
     render(...args) {
         super.render(...args)
         this._represents.apps[this.appId] = this
+    }
+
+}
+
+export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2) {
+
+    static DEFAULT_OPTIONS = {
+        classes: ['acp-portrait', 'faded-ui'],
+        id: 'acp-portrait_{id}',
+        position: {
+            height: 236,
+            width: 200
+        }
+    }
+
+    static PARTS = {
+        image: {
+            template: 'modules/active-character-portrait/templates/portrait.hbs'
+        }
+    }
+
+    constructor(user) {
+        super()
+        this.represents = user
+    }
+
+    _prepareContext(opts) {
+        return this.represents.character
+    }
+
+    async close(opts) {
+        delete this.represents[this.id]
+        if (game.settings.get(ACP.ID, 'bypassEscKey') && opts?.closeKey) return
+        super.close(opts)
+    }
+
+    _onFirstRender(context, options) {
+        this.represents.apps[this.id] = this
+    }
+
+    _onRender(context, options) {
+        const portrait = document.querySelector('.acp-image')
+        if (!portrait) return
+        portrait.addEventListener('click', (event) => this.#openCharSheet())
+        portrait.addEventListener('contextmenu', (event) => this.#openCharSelect())
+    }
+
+
+    #openCharSelect() {
+        // new CharacterSelector().render(true)
+    }
+
+    #openCharSheet() {
+        return this.represents.character.sheet.render(true)
     }
 
 }

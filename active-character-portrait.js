@@ -1,6 +1,5 @@
-import Portrait from "./classes/portrait.js"
+import PortraitV2 from "./classes/portrait.js"
 import PersistentPopout from "./classes/popout.js"
-import CharacterSelector from "./classes/charSelector.js"
 
 export default class ACP {
 
@@ -67,7 +66,10 @@ Hooks.on('init', function() {
             }
         ],
         onDown: () => {
-            new Portrait(game.user).render(true)
+            const portrait = document.querySelector('[id^="acp-portrait"]')
+            portrait === null 
+                ? new PortraitV2(game.user).render(true)
+                : foundry.applications.instances.get(portrait.id).close()
         },
     })
 
@@ -93,8 +95,8 @@ Hooks.once('ready', function() {
         })
     }
     setTimeout(() => {
-        new Portrait(game.user).render(true)
-    },1000)
+        new PortraitV2(game.user).render(true)
+    }, 1000)
 
     game.socket.on("module.active-character-portrait", (data) => {
         PersistentPopout._handleShareApp(data)
