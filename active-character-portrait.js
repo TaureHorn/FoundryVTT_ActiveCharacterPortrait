@@ -1,5 +1,4 @@
 import PortraitV2 from "./classes/portrait.js"
-import PersistentPopout from "./classes/popout.js"
 
 export default class ACP {
 
@@ -15,12 +14,23 @@ export default class ACP {
         PORTRAIT: `modules/${this.ID}/portrait.hbs`
     }
 
+    static getPosition() {
+        return {
+            left: Math.floor(window.innerWidth * (game.release.generation >= 13 ? 0.125 : 0.8)),
+            top: Math.floor(window.innerHeight * (game.release.generation >= 13 ? 0.01 : 0.8))
+        }
+    }
+
     static log(force, ...args) {
         const shouldLog = force || game.modules.get('_dev-mode')?.api?.getPackage
 
         if (shouldLog) {
             console.log(this.ID, '|', ...args)
         }
+    }
+
+    static switchCharacter() {
+
     }
 }
 
@@ -57,6 +67,18 @@ Hooks.on('init', function() {
         requiresReload: true
     })
 
+    if (game.release.generation >= 13) {
+        game.settings.register(ACP.ID, 'fadeUI', {
+            name: "Fade portrait UI",
+            hint: 'Allow portrait window to fade out when not hovered like the rest of the UI elements',
+            scope: 'client',
+            config: true,
+            type: Boolean,
+            default: true,
+            requiresReload: true
+        })
+    }
+
     game.keybindings.register(ACP.ID, 'togglePortrait', {
         name: "Toggle portrait window",
         hint: "Toggles the active character portrait window",
@@ -67,25 +89,17 @@ Hooks.on('init', function() {
         ],
         onDown: () => {
             const portrait = document.querySelector('[id^="acp-portrait"]')
-            portrait === null 
+            portrait === null
                 ? new PortraitV2(game.user).render(true)
                 : foundry.applications.instances.get(portrait.id).close()
         },
     })
 
-
 })
 
 // pre set users flags for the positioning of windows and auto launch portrait app
 Hooks.once('ready', function() {
-    if (!game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT)) {
-        game.user.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, {
-            height: 200,
-            left: canvas.app.screen.width - 512,
-            top: canvas.app.screen.height - 240,
-            width: 200
-        })
-    }
+    
     if (!game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR)) {
         game.user.setFlag(ACP.ID, ACP.FLAGS.SELECTOR, {
             height: canvas.app.screen.height * 0.5,
@@ -94,13 +108,32 @@ Hooks.once('ready', function() {
             width: canvas.app.screen.width * 0.6
         })
     }
+
+    // OPEN PORTRAIT WHEN GAME LOADS
     setTimeout(() => {
         new PortraitV2(game.user).render(true)
-    }, 1000)
+    }, 500)
 
-    game.socket.on("module.active-character-portrait", (data) => {
-        PersistentPopout._handleShareApp(data)
-    })
 })
+
+Hooks.on('getActorSheetHeaderButtons', async (app, buttons) => {
+    if (app.object && game.settings.get(ACP.ID, 'headerButton')) {
+        buttons.unshift({
+            class: 'acp-switcher',
+            icon: 'fa fa-swap-arrows',
+            label: game.settings.get(ACP.ID, 'headerLabels') ? 'ACP Switcher' : '',
+            onclick: () => {
+                if (!app.object.pack) {
+                    const character = game.actors.get(app.object._id)
+                    character ? game.user.update({ "character": character }) : ui.notifications.error(`ACP | unable to find actor with id of ${app.object._id}.`)
+                } else {
+                    ui.notifications.warn('ACP | Cannot set a Compendium item as your active character!')
+                }
+            },
+            tooltip: 'Active Character Portrait | Switch to character'
+        })
+    }
+})
+
 
 

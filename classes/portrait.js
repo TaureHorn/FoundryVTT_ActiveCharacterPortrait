@@ -2,126 +2,20 @@ import ACP from "../active-character-portrait.js";
 import CharacterSelector from "./charSelector.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api
 
-class Portrait extends Application {
-
-    constructor(user) {
-        super()
-        this._represents = user
-    }
-
-    static get defaultOptions() {
-        const defaults = super.defaultOptions;
-        const overrides = {
-            classes: ["acp-portait"],
-            height: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).height,
-            id: `${ACP.ID}_portrait`,
-            left: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).left,
-            minimizable: false,
-            popOut: true,
-            resizable: true,
-            template: ACP.TEMPLATE.PORTRAIT,
-            top: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).top,
-            width: game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT).width,
-        }
-        return foundry.utils.mergeObject(defaults, overrides)
-    }
-
-    getData() {
-        let data = ""
-        if (this._represents.character) {
-            data = this._represents.character
-        } else {
-            data = {
-                name: this._represents.name,
-                img: this._represents.avatar
-            }
-        }
-        this.options.title = data.name
-        return data
-    }
-
-    _getHeaderButtons() {
-        const buttons = [
-            {
-                class: "pin",
-                icon: "fas fa-thumbtack",
-                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Pin' : '',
-                onclick: () => {
-                    game.user.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, this.position)
-                    ui.notifications.notify("active character portrait | Pinned portrait to current size and position")
-                },
-                tooltip: 'Remember this window size and location'
-            },
-            {
-                class: "close",
-                icon: "fas fa-times",
-                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Close' : '',
-                onclick: () => this.close("forceClose"),
-                tooltip: 'Close window'
-            }
-        ]
-        if (game.user.isGM) {
-            buttons.unshift({
-                label: game.settings.get(ACP.ID, 'headerLabels') ? 'Zoom' : '',
-                class: "show-image",
-                icon: "fas fa-magnifying-glass",
-                onclick: () => {
-                    const ip = new PersistentPopout(this._represents.character.img, {
-                        title: this._represents.character.name,
-                        uuid: this._represents.character.uuid
-                    })
-                    ip.render(true)
-                },
-                tooltip: 'Show actors image in separate window'
-            })
-        }
-        return buttons
-    }
-
-    activateListeners(html) {
-        super.activateListeners(html)
-        html.on('click', this, this._handleLeftClick)
-        html.on('contextmenu', "[data-action]", this._handleRightClick)
-    }
-
-
-    async close(...args) {
-        if (!game.settings.get(ACP.ID, 'bypassEscKey') || Object.values(arguments).includes("forceClose")) {
-            delete this._represents.apps[this.appId]
-            return super.close(...args)
-        }
-    }
-
-    _handleLeftClick = async () => {
-        if (this._represents.character) {
-            return this._represents.character.sheet.render(true)
-        } else {
-            ui.notifications.warn('active character portrait | you must select a character to represent you')
-        }
-    }
-
-    _handleRightClick(event) {
-        const action = $(event.currentTarget).data().action
-        if (action === "openConfig") {
-            new CharacterSelector().render(true)
-        }
-    }
-
-    render(...args) {
-        super.render(...args)
-        this._represents.apps[this.appId] = this
-    }
-
-}
-
 export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
-        classes: ['acp-portrait', 'faded-ui'],
+        classes: ['acp-portrait'],
         id: 'acp-portrait_{id}',
+        // parts: ['modules/active-character-portrait/templates/portrait.hbs'],
         position: {
             height: 236,
             width: 200
+        },
+        window: {
+            icon: 'fas fa-image-user',
+            minimizable: true,
+            resizable: true,
         }
     }
 
@@ -136,58 +30,72 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
         this.represents = user
     }
 
-    _prepareContext(opts) {
+    // DETERMINE SIZE AND POSITION OF WINDOW BASED ON FLAGS AND RELATIVE WINDOW DIMENSIONS
+    async _prepareContext(opts) {
+        if (game.release.generation >= 13) {
+            if (game.settings.get(ACP.ID, 'fadeUI') && opts.isFirstRender) {
+                this.options.classes.push('faded-ui')
+            }
+        }
         return this.represents.character
     }
 
-    async close(opts) {
-        delete this.represents[this.id]
-        if (game.settings.get(ACP.ID, 'bypassEscKey') && opts?.closeKey) return
-        super.close(opts)
+    async _preFirstRender(context, options) {
+        if (options.position) {
+            const pref = game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT)
+            const base = ACP.getPosition()
+            if (pref) {
+                options.position.height = pref.height
+                options.position.width = pref.width
+            }
+            options.position.left = pref ? pref.left : base.left
+            options.position.top = pref ? pref.top : base.top
+        }
     }
 
-    _onFirstRender(context, options) {
+    // ADD RENDERED APP TO USER DOCUMENT
+    async _onFirstRender(context, options) {
         this.represents.apps[this.id] = this
     }
 
+    // ONLY TRIGGER FULLY ONCE EVERY 5 SECONDS, WRITE APP POSITION AND SIZE TO USER FLAGS
+    _onPosition(position) {
+        console.log('pos', this)
+        if (typeof this.window.inMotion === 'undefined') this.window.inMotion = false
+        if (this.window.inMotion) return
+        setTimeout(async () => {
+            await game.user.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, position)
+            console.info(`${ACP.ID}: saved position and size of portrait window to user flags`)
+            delete this.window.inMotion
+        }, 5000);
+        this.window.inMotion = true
+    }
+
+    // ADD INTERACTIONS TO PORTRAIT IMAGE
     _onRender(context, options) {
         const portrait = document.querySelector('.acp-image')
         if (!portrait) return
-        portrait.addEventListener('click', (event) => this.#openCharSheet())
-        portrait.addEventListener('contextmenu', (event) => this.#openCharSelect())
+        portrait.addEventListener('click', () => this.#openCharSheet())
+        portrait.addEventListener('contextmenu', () => this.#openCharSelect())
+
     }
 
+    // IF MODULE BYPASS ESCAPE KEY SET DO NOT CLOSE, ELSE DELETE APP FROM DOCUMENT AND CLOSE
+    async close(opts) {
+        if (game.settings.get(ACP.ID, 'bypassEscKey') && opts?.closeKey) return
+        delete this.represents[this.id]
+        super.close(opts)
+    }
 
+    // RIGHT CLICK PORTRAIT IMAGE
     #openCharSelect() {
         // new CharacterSelector().render(true)
     }
 
+    // LEFT CLICK PORTRAIT IMAGE
     #openCharSheet() {
         return this.represents.character.sheet.render(true)
     }
 
 }
-
-// TODO: switch out hook to relevant v13 hook
-//
-// add button to actor sheet header to switch to actor representing player
-// method stolen from _dev-mode module
-Hooks.on('getActorSheetHeaderButtons', async (app, buttons) => {
-    if (app.object && game.settings.get(ACP.ID, 'headerButton')) {
-        buttons.unshift({
-            class: 'acp-switcher',
-            icon: 'fa fa-swap-arrows',
-            label: game.settings.get(ACP.ID, 'headerLabels') ? 'ACP Switcher' : '',
-            onclick: () => {
-                if (!app.object.pack) {
-                    const character = game.actors.get(app.object._id)
-                    character ? game.user.update({ "character": character }) : ui.notifications.error(`ACP | unable to find actor with id of ${app.object._id}.`)
-                } else {
-                    ui.notifications.warn('ACP | Cannot set a Compendium item as your active character!')
-                }
-            },
-            tooltip: 'Active Character Portrait | Switch to character'
-        })
-    }
-})
 
