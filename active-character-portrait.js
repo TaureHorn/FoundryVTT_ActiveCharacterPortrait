@@ -4,6 +4,8 @@ export default class ACP {
 
     static ID = 'active-character-portrait'
 
+    static NAME = 'Active Character Portrait'
+
     static FLAGS = {
         PORTRAIT: 'portraitWindow',
         SELECTOR: 'characterSelectWindow'

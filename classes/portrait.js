@@ -5,6 +5,9 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api
 export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
+        actions: {
+            click: PortraitV2.#onClick
+        },
         classes: ['acp-portrait'],
         id: 'acp-portrait_{id}',
         position: {
@@ -69,12 +72,10 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
         this.window.inMotion = true
     }
 
-    // ADD INTERACTIONS TO PORTRAIT IMAGE
+    // ADD EVENT LISTENER TO THIS PORTRAITS IMAGE TRIGGER #openSelector ON RIGHT CLICK
     _onRender(context, options) {
-        const portrait = document.querySelector('.acp-image')
-        if (!portrait) return
-        portrait.addEventListener('click', () => this.#openCharSheet())
-        portrait.addEventListener('contextmenu', () => this.#openCharSelect())
+        const image = document.getElementById(this.id).querySelector('.acp-image')
+        image.addEventListener('contextmenu', () => this.#openSelector())
     }
 
     // IF MODULE BYPASS ESCAPE KEY SET DO NOT CLOSE, ELSE DELETE APP FROM DOCUMENT AND CLOSE
@@ -84,19 +85,23 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
         super.close(opts)
     }
 
-    // RIGHT CLICK PORTRAIT IMAGE
-    #openCharSelect() {
-        // new CharacterSelector().render(true)
+    // CLICK PORTRAIT OPEN CHARACTER SHEET OR WARN CHARACTER NOT SET IN USER CONFIG
+    static #onClick(event, target) {
+        return this.represents.character
+            ? this.represents.character.sheet.render(true)
+            : ui.notifications.warn(`${ACP.NAME}: You have not selected a character to represent you in the user config`)
     }
 
-    // LEFT CLICK PORTRAIT IMAGE
-    #openCharSheet() {
-        if (this.represents.character) {
-            return this.represents.character.sheet.render(true)
-        } else {
-            return ui.notifications.warn(`${ACP.ID}: You have not set a character in the user config`)
-        }
+    // RIGHT CLICK PORTRAIT OPEN CHARACTER SELECTOR OR BRING TO FRONT
+    #openSelector(event) {
+        const app = document.querySelector('[id^="acp-character-select"]')
+
+        app.length
+            ? foundry.applications.instances.get(app.id).bringToFront()
+            : new CharacterSelector().render(true)
     }
 
 }
+
+globalThis.ActiveCharacterPortrait = PortraitV2
 
