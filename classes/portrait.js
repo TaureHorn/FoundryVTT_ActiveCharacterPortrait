@@ -5,9 +5,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api
 export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
-        actions: {},
         classes: ['acp-portrait'],
-        fomr: {},
         id: 'acp-portrait_{id}',
         position: {
             height: 236,
@@ -43,7 +41,7 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
 
     async _preFirstRender(context, options) {
         if (options.position) {
-            const pref = game.user.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT)
+            const pref = this.represents.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT)
             const base = ACP.getPosition()
             if (pref) {
                 options.position.height = pref.height
@@ -64,8 +62,8 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
         if (typeof this.window.inMotion === 'undefined') this.window.inMotion = false
         if (this.window.inMotion) return
         setTimeout(async () => {
-            await game.user.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, position)
-            console.info(`${ACP.ID}: saved position and size of portrait window to user flags`)
+            await this.represents.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, position)
+            console.info(`${ACP.ID}: saved position and size of portrait window to user '${this.represents.name}' flags`)
             delete this.window.inMotion
         }, 5000);
         this.window.inMotion = true
@@ -77,7 +75,6 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
         if (!portrait) return
         portrait.addEventListener('click', () => this.#openCharSheet())
         portrait.addEventListener('contextmenu', () => this.#openCharSelect())
-
     }
 
     // IF MODULE BYPASS ESCAPE KEY SET DO NOT CLOSE, ELSE DELETE APP FROM DOCUMENT AND CLOSE
