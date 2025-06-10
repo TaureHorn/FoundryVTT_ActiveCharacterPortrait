@@ -24,7 +24,7 @@
 .acp-image {
     border: none;
     cursor: pointer;
-    margin: 0!important;
+    margin: 0 !important;
     outline: none;
     padding: 0;
 }
@@ -33,9 +33,6 @@
     padding: 20px
 }
 
-
-
 #acp-char-search {
     color: var(--color-text-primary);
 }
-

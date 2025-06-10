@@ -5,9 +5,10 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api
 export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static DEFAULT_OPTIONS = {
+        actions: {},
         classes: ['acp-portrait'],
+        fomr: {},
         id: 'acp-portrait_{id}',
-        // parts: ['modules/active-character-portrait/templates/portrait.hbs'],
         position: {
             height: 236,
             width: 200
@@ -37,7 +38,7 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
                 this.options.classes.push('faded-ui')
             }
         }
-        return this.represents.character
+        return this.represents.character ? this.represents.character : this.represents
     }
 
     async _preFirstRender(context, options) {
@@ -60,7 +61,6 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
 
     // ONLY TRIGGER FULLY ONCE EVERY 5 SECONDS, WRITE APP POSITION AND SIZE TO USER FLAGS
     _onPosition(position) {
-        console.log('pos', this)
         if (typeof this.window.inMotion === 'undefined') this.window.inMotion = false
         if (this.window.inMotion) return
         setTimeout(async () => {
@@ -94,7 +94,11 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
 
     // LEFT CLICK PORTRAIT IMAGE
     #openCharSheet() {
-        return this.represents.character.sheet.render(true)
+        if (this.represents.character) {
+            return this.represents.character.sheet.render(true)
+        } else {
+            return ui.notifications.warn(`${ACP.ID}: You have not set a character in the user config`)
+        }
     }
 
 }

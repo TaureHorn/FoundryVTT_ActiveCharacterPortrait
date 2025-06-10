@@ -1,10 +1,9 @@
-{{log this}}
-<div role="button" data-action="openConfig">
+<div role="button" data-action="openConfig" style="height:100%">
     <img 
         class="acp-image"
         data-action="openConfig"
         data-tooltip="{{localize 'ACP.open-config'}}"
         id="characterImg"
-        src="{{img}}" 
+        src="{{#if img}} {{img}} {{else}} {{avatar}} {{/if}}" 
     />
 </div>
