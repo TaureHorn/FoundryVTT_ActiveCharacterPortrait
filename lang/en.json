@@ -4,8 +4,9 @@
             "no-characters": "There are no characters available to you",
             "no-search": "No characters found by the name",
             "search": "Search",
+            "select": "Select",
             "title": "Character selector",
-            "unselect": "Unselect character"
+            "unselect": "Release character"
         },
         "open-config": "click: open sheet | open character selector"
     }

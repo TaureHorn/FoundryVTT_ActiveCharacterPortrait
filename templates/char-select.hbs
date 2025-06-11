@@ -1,26 +1,30 @@
 <div id="char-select">
-    <div>
-        <input type="text" name="charSearch" id="acp-char-search" minlength="1" maxlength="64" placeholder="search..." />
+    <div class="form-group">
+        <label><i class="fas fa-magnifying-glass"></i> {{localize "ACP.character-select.search"}}</label>
+        <input type="text" name="charSearch" id="acp-char-search" class="acp-char-search_{{user.id}}" minlength="1" maxlength="64" placeholder="..." />
         <button for="charSearch" type="submit" style="display:none"></button>
     </div>
+    <br>
     {{#if characters.length}}
     {{#if searchQuery}} <p>{{localize "ACP.character-select.search"}}: {{searchQuery}}</p> {{/if}}
     <div class="acp-char-table">
     {{#each characters}}
-        <button class="acp-button acp-char" data-action="select" data-char-id="{{_id}}" title="{{name}}">
-            <div style="align-items:center;display:flex;gap:10px">
-                <img class="acp-image" src="{{img}}" height="64" width="64"/>
-                <span>{{name}}</span>
+    <button class="acp-char" data-action="select" data-char-id="{{_id}}" title="{{localize "ACP.character-select.select"}} {{name}}" type="button">
+            <img class="acp-image" src="{{img}}" height="64" width="64"/>
+            <div class="acp-details">
+                <p class="acp-name">{{name}}</p>
+                <p class="acp-own">{{#if ../user.gm}} {{type}} {{else}} {{ownedLevel}} </p>{{/if}}
             </div>
         </button>
     {{/each}}
     </div>
     {{else}}
         {{#if searchQuery}}
-        <p>{{localize "ACP.character-select.no-search"}} {{searchQuery}}</p>
+        <p class="hint">{{localize "ACP.character-select.no-search"}} {{searchQuery}}</p>
         {{else}}
         <p class="hint">{{localize "ACP.character-select.no-characters"}}</p>
         {{/if}}
     {{/if}}
-    <button data-action="unselect">{{localize "ACP.character-select.unselect"}}</button>
+    <hr/>
+    <button style="width: 100%" data-action="unselect"><i class="fas fa-ban"></i> {{localize "ACP.character-select.unselect"}}</button>
 </div>
