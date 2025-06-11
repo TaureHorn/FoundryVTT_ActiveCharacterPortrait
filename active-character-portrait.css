@@ -20,7 +20,9 @@
     gap: 1em;
     height: unset !important;
     justify-content: space-around;
-    overflow: hidden;
+    max-height: 50vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
     padding: 0px;
     text-align: left;
     white-space: nowrap;
