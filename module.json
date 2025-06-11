@@ -1,12 +1,12 @@
 {
     "id": "active-character-portrait",
     "title": "Active Character Portrait",
-    "version": "1.4.1",
+    "version": "1.5",
     "compatibility": {
-        "minimum": "11",
-        "verified": "12"
+        "minimum": "12",
+        "verified": "13.345"
     },
-    "description": "Adds a togglable floating window showing the name and portrait of the currently selected character and adds a character selection window.",
+    "description": "Adds a togglable floating window showing portrait of the currently selected character and adds a character selection window.",
     "esmodules": [
         "active-character-portrait.js"
     ],
@@ -28,7 +28,6 @@
         }
     ],
     "url": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait",
-    "download": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.4.1/active-character-portrait_v1.4.1.zip",
-    "manifest": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.4.1/module.json",
-    "socket": true
+    "download": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/download/v1.5/active-character-portrait_v1.5.zip",
+    "manifest": "https://github.com/TaureHorn/FoundryVTT_ActiveCharacterPortrait/releases/latest/download/module.json"
 }
