@@ -16,21 +16,29 @@
 
 .acp-char {
     cursor: pointer;
-    display: flex;
+    display: flex !important;
     gap: 1em;
     height: unset !important;
     justify-content: space-around;
     overflow: hidden;
-    padding: 0px;
+    padding: 0px !important;
     text-align: left;
     white-space: nowrap;
 }
 
 .acp-char-table {
+    border-bottom-width: 1px;
+    border-color: inherit;
+    border-left-width: 0px;
+    border-radius: 4px;
+    border-right-width: 0px;
+    border-style: solid;
+    border-top-width: 1px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     max-height: 50vh;
+    padding: 1em;
     overflow-y: scroll;
 }
 
@@ -48,9 +56,16 @@
     width: 100%;
 }
 
+.acp-details p {
+    line-height: 1;
+    text-wrap: wrap;
+}
+
 .acp-name {
     font-size: 1.2em;
     font-weight: bold;
+    line-height: 1;
+    text-wrap: wrap;
 }
 
 .acp-own {
