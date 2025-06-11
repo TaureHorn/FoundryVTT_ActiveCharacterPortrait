@@ -1,56 +1,59 @@
-
-.acp-button {
-    background: none;
-    border: none;
-    box-sizing: content-box;
-    display: block;
-    margin: 0;
-    outline: none;
-    padding: 0;
-}
-
-.acp-char {
-    border: 1px solid var(--color-border-dark-5);
-    overflow: hidden;
-    text-align: left;
-    white-space: nowrap;
-}
-
-.acp-char:hover {
-    filter: brightness(1.25);
-    font-weight: bold;
-}
-
-.acp-char-table {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-}
+/* ================== PORTRAIT */
 
 .acp-image {
     border: none;
     cursor: pointer;
-    margin: 0!important;
+    margin: 0 !important;
     outline: none;
     padding: 0;
 }
 
-.acp-image:hover {
-    filter: brightness(1.25);
-}
-
-#active-character-portrait_portrait .window-content {
-    background:none !important;
-}
-
-#active-character-portrait_character-selector .window-content {
-    padding: 20px
-}
-
-#active-character-portrait_portrait .window-content {
+.acp-portrait .window-content {
     padding: 0px !important;
 }
 
-#acp-char-search {
-    color: var(--color-text-primary);
+/* ================== SELECTOR */
+
+.acp-char {
+    cursor: pointer;
+    display: flex;
+    gap: 1em;
+    height: unset !important;
+    justify-content: space-around;
+    overflow: hidden;
+    padding: 0px;
+    text-align: left;
+    white-space: nowrap;
 }
+
+.acp-char-table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.acp-char .acp-image {
+    border-right-color: inherit;
+    border-right-style: solid;
+    border-right-width: 1px;
+}
+
+#acp-char-search {
+    flex: 10;
+}
+
+.acp-details {
+    width: 100%;
+}
+
+.acp-name {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.acp-own {
+    font-size: 0.8em;
+    color: var(--color-form-hint);
+    text-transform: uppercase;
+}
+
