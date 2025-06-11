@@ -54,6 +54,7 @@ export default class CharacterSelectorV2 extends HandlebarsApplicationMixin(Appl
                 characters.push(actor)
             }
         }
+        characters.sort((a,b) => a.name.localeCompare(b.name,'en', {sensitivity: 'base'}))
 
         const user = this.user
         user.gm = this.user.isGM
