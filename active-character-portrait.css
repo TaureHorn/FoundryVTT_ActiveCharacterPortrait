@@ -20,9 +20,7 @@
     gap: 1em;
     height: unset !important;
     justify-content: space-around;
-    max-height: 50vh;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
     padding: 0px;
     text-align: left;
     white-space: nowrap;
@@ -32,6 +30,8 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
+    max-height: 50vh;
+    overflow-y: scroll;
 }
 
 .acp-char .acp-image {
