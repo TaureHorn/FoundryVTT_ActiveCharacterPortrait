@@ -1,14 +1,13 @@
 <div id="char-select">
-    <button data-action="unselect-char">Unselect Character</button>
-    </br></br>
-    <form>
+    <div>
         <input type="text" name="charSearch" id="acp-char-search" minlength="1" maxlength="64" placeholder="search..." />
         <button for="charSearch" type="submit" style="display:none"></button>
-    </form>
-    </br>
+    </div>
+    {{#if characters.length}}
+    {{#if searchQuery}} <p>{{localize "ACP.character-select.search"}}: {{searchQuery}}</p> {{/if}}
     <div class="acp-char-table">
-    {{#each chars}}
-        <button class="acp-button acp-char" data-action="select-char" data-char-id="{{_id}}" title="{{name}}">
+    {{#each characters}}
+        <button class="acp-button acp-char" data-action="select" data-char-id="{{_id}}" title="{{name}}">
             <div style="align-items:center;display:flex;gap:10px">
                 <img class="acp-image" src="{{img}}" height="64" width="64"/>
                 <span>{{name}}</span>
@@ -16,4 +15,12 @@
         </button>
     {{/each}}
     </div>
+    {{else}}
+        {{#if searchQuery}}
+        <p>{{localize "ACP.character-select.no-search"}} {{searchQuery}}</p>
+        {{else}}
+        <p class="hint">{{localize "ACP.character-select.no-characters"}}</p>
+        {{/if}}
+    {{/if}}
+    <button data-action="unselect">{{localize "ACP.character-select.unselect"}}</button>
 </div>

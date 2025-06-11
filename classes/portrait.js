@@ -42,10 +42,11 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
         return this.represents.character ? this.represents.character : this.represents
     }
 
+    // SET OR DERIVE APP DIMENSIONS AND SCREEN PLACEMENT
     async _preFirstRender(context, options) {
         if (options.position) {
             const pref = this.represents.getFlag(ACP.ID, ACP.FLAGS.PORTRAIT)
-            const base = ACP.getPosition()
+            const base = ACP.getPosition(this.constructor)
             if (pref) {
                 options.position.height = pref.height
                 options.position.width = pref.width
@@ -53,6 +54,7 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
             options.position.left = pref ? pref.left : base.left
             options.position.top = pref ? pref.top : base.top
         }
+        return context
     }
 
     // ADD RENDERED APP TO USER DOCUMENT
@@ -66,7 +68,7 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
         if (this.window.inMotion) return
         setTimeout(async () => {
             await this.represents.setFlag(ACP.ID, ACP.FLAGS.PORTRAIT, position)
-            console.info(`${ACP.ID}: saved position and size of portrait window to user '${this.represents.name}' flags`)
+            console.info(`${ACP.NAME}: saved position and size of portrait window to user '${this.represents.name}' flags`)
             delete this.window.inMotion
         }, 5000);
         this.window.inMotion = true
@@ -81,7 +83,7 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
     // IF MODULE BYPASS ESCAPE KEY SET DO NOT CLOSE, ELSE DELETE APP FROM DOCUMENT AND CLOSE
     async close(opts) {
         if (game.settings.get(ACP.ID, 'bypassEscKey') && opts?.closeKey) return
-        delete this.represents[this.id]
+        delete this.represents.apps[this.id]
         super.close(opts)
     }
 
@@ -94,11 +96,10 @@ export default class PortraitV2 extends HandlebarsApplicationMixin(ApplicationV2
 
     // RIGHT CLICK PORTRAIT OPEN CHARACTER SELECTOR OR BRING TO FRONT
     #openSelector(event) {
-        const app = document.querySelector('[id^="acp-character-select"]')
-
-        app.length
-            ? foundry.applications.instances.get(app.id).bringToFront()
-            : new CharacterSelector().render(true)
+        const app = document.querySelector(`.acp-char-select_${this.represents.id}`)
+        app === null
+            ? new CharacterSelector(this.represents).render(true)
+            : foundry.applications.instances.get(app.id).bringToFront()
     }
 
 }

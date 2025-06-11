@@ -1,5 +1,5 @@
+import CharacterSelectorV2 from "./classes/charSelector.js"
 import PortraitV2 from "./classes/portrait.js"
-
 export default class ACP {
 
     static ID = 'active-character-portrait'
@@ -11,15 +11,22 @@ export default class ACP {
         SELECTOR: 'characterSelectWindow'
     }
 
-    static TEMPLATE = {
-        CHARSELECT: `modules/${this.ID}/char-select.hbs`,
-        PORTRAIT: `modules/${this.ID}/portrait.hbs`
-    }
-
-    static getPosition() {
-        return {
-            left: Math.floor(window.innerWidth * (game.release.generation >= 13 ? 0.125 : 0.8)),
-            top: Math.floor(window.innerHeight * (game.release.generation >= 13 ? 0.01 : 0.8))
+    static getPosition(appClass) {
+        switch (appClass) {
+            case CharacterSelectorV2:
+                return {
+                    left: Math.floor(window.innerWidth * 0.33),
+                    top: Math.floor(window.innerHeight * 0.33)
+                }
+            case PortraitV2:
+                return {
+                    left: Math.floor(window.innerWidth * (game.release.generation >= 13 ? 0.125 : 0.8)),
+                    top: Math.floor(window.innerHeight * (game.release.generation >= 13 ? 0.01 : 0.8))
+                }
+            default:
+                const message = `${this.NAME}: received and incorrect class constructor in ACP.getPosition`
+                ui.notifications.error(message)
+                throw new Error(message)
         }
     }
 
@@ -31,13 +38,26 @@ export default class ACP {
         }
     }
 
-    static switchCharacter() {
-
-    }
 }
 
 // REGISTER SETTINGS AND KEYBINDS
 Hooks.on('init', function() {
+
+    const ownershipLevels = {}
+    for (const [str, num] of Object.entries(CONST.DOCUMENT_OWNERSHIP_LEVELS)) {
+        if (num < 0) continue
+        ownershipLevels[num] = str
+    }
+    game.settings.register(ACP.ID, 'ownershipLevel', {
+        name: "Player onwership level in character selector",
+        hint: 'Set what ownership level users can pick characters from in the character selector',
+        scope: 'world',
+        config: true,
+        type: Number,
+        choices: ownershipLevels,
+        default: 2,
+        requiresReload: false
+    })
 
     game.settings.register(ACP.ID, 'bypassEscKey', {
         name: "Bypass 'Esc' key",
@@ -101,7 +121,7 @@ Hooks.on('init', function() {
 
 // pre set users flags for the positioning of windows and auto launch portrait app
 Hooks.once('ready', function() {
-    
+
     if (!game.user.getFlag(ACP.ID, ACP.FLAGS.SELECTOR)) {
         game.user.setFlag(ACP.ID, ACP.FLAGS.SELECTOR, {
             height: canvas.app.screen.height * 0.5,

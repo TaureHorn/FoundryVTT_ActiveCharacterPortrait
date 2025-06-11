@@ -1,6 +1,12 @@
 {
     "ACP": {
-        "button-title": "Open/close active character portrait window",
+        "character-select": {
+            "no-characters": "There are no characters available to you",
+            "no-search": "No characters found by the name",
+            "search": "Search",
+            "title": "Character selector",
+            "unselect": "Unselect character"
+        },
         "open-config": "click: open sheet | open character selector"
     }
 }
